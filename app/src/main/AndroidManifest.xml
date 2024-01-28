@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication2"
         tools:targetApi="31">
+        <activity android:name=".logsActivity">
+        </activity>
+        <activity android:name="singlePage"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

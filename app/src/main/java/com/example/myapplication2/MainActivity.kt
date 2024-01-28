@@ -1,6 +1,7 @@
 package com.example.myapplication2
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -38,9 +39,10 @@ class MainActivity : AppCompatActivity() {
         println("TEST");
         Log.d("login", username.getText().toString());
         finish();
-        var LoginActivity: Intent = Intent()
-        startActivity()
-
+        Log.d("login", "FINISHED")
+        intent = Intent(this, logsActivity::class.java);
+        Log.d("login", "intent created")
+        startActivity(intent);
         return null;
     }
 
