@@ -42,7 +42,10 @@ public class CarbCalculator extends Activity {
         resultTextView = findViewById(R.id.resultView);
 
         Button addFoodButton = findViewById(R.id.addFoodButton);
-        addFoodButton.setOnClickListener(v -> {addFoodEntryField(); calculateTotalNutrition();});
+        addFoodButton.setOnClickListener(v -> {
+            addFoodEntryField();
+            calculateTotalNutrition();
+        });
 
         Button doneButton = findViewById(R.id.doneButton);
         doneButton.setOnClickListener(v -> navigateToNewPage());
@@ -119,10 +122,14 @@ public class CarbCalculator extends Activity {
             public void afterTextChanged(Editable s) {
                 calculateTotalNutrition();
             }
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         };
 
         foodTypeEditText.addTextChangedListener(textWatcher);
@@ -148,12 +155,12 @@ public class CarbCalculator extends Activity {
     }
 
 
-    @SuppressLint("DefaultLocale")
+    // ... [rest of your existing code]
+
     private void calculateTotalNutrition() {
         totalCalories = 0;
         totalCarbs = 0;
         tasksCompleted.set(0);
-        List<FetchNutritionTask> tasks = new ArrayList<>();
 
         for (int i = 0; i < foodTypeEditTexts.size(); i++) {
             String foodType = foodTypeEditTexts.get(i).getText().toString().trim();
@@ -163,30 +170,23 @@ public class CarbCalculator extends Activity {
                 try {
                     double weightValue = Double.parseDouble(weight);
                     if (weightValue > 0) {
-                        FetchNutritionTask task = new FetchNutritionTask();
-                        tasks.add(task);
+                        FetchNutritionTask task = new FetchNutritionTask(foodTypeEditTexts.size());
                         task.execute(foodType, weight);
                     }
                 } catch (NumberFormatException ignored) {
                 }
             }
         }
-
-        new Thread(() -> {
-            for (FetchNutritionTask task : tasks) {
-                try {
-                    task.get();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            runOnUiThread(() -> resultTextView.setText(String.format("Total Calories: %.2f kcal\nTotal Carbs: %.2f grams", totalCalories, totalCarbs)));
-        }).start();
     }
 
-    @SuppressLint("StaticFieldLeak")
     private class FetchNutritionTask extends AsyncTask<String, Void, String> {
+        private final int totalTasks;
 
+        public FetchNutritionTask(int totalTasks) {
+            this.totalTasks = totalTasks;
+        }
+
+        @Override
         protected String doInBackground(String... params) {
             String foodType = params[0];
             String weight = params[1];
@@ -222,20 +222,22 @@ public class CarbCalculator extends Activity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONObject totalNutrients = jsonObject.getJSONObject("totalNutrients");
 
-                    if (totalNutrients.has("ENERC_KCAL") && totalNutrients.has("CHOCDF")) {
+                    if (totalNutrients.has("ENERC_KCAL")) {
                         JSONObject caloriesJson = totalNutrients.getJSONObject("ENERC_KCAL");
+                        totalCalories += caloriesJson.getDouble("quantity");
+                    }
+                    if (totalNutrients.has("CHOCDF")) {
                         JSONObject carbsJson = totalNutrients.getJSONObject("CHOCDF");
+                        totalCarbs += carbsJson.getDouble("quantity");
+                    }
 
-                        synchronized (this) {
-                            totalCalories += caloriesJson.getDouble("quantity");
-                            totalCarbs += carbsJson.getDouble("quantity");
-                        }
+                    if (tasksCompleted.incrementAndGet() == totalTasks) {
+                        resultTextView.setText(String.format("Total Calories: %.2f kcal\nTotal Carbs: %.2f grams", totalCalories, totalCarbs));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            tasksCompleted.incrementAndGet();
         }
     }
 }
