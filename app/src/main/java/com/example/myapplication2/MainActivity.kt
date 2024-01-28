@@ -3,18 +3,11 @@ package com.example.myapplication2
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Button
-import com.example.myapplication2.databinding.LoginBinding
 import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.ui.AppBarConfiguration
+import com.example.myapplication2.databinding.LoginBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,13 +29,9 @@ class MainActivity : AppCompatActivity() {
     }
     @SuppressLint("SetTextI18n")
     fun login() : Void? {
-        println("TEST");
-        Log.d("login", username.getText().toString());
-        finish();
-        Log.d("login", "FINISHED")
         intent = Intent(this, logsActivity::class.java);
-        Log.d("login", "intent created")
         startActivity(intent);
+        finish();
         return null;
     }
 
