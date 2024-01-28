@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonReturn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return" />
+
+    <EditText
+        android:id="@+id/editTextCarbRatio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Carbohydrate Ratio"
+        android:inputType="numberDecimal"/>
+
+    <EditText
+        android:id="@+id/editTextGlucoseReading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Glucose Reading"
+        android:inputType="numberDecimal"/>
+
+    <!-- Add Checkboxes for Conditions -->
+    <CheckBox
+        android:id="@+id/checkBoxCondition1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Less than 3h since last dose"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxCondition2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Less than 3h since last meal/low glucose treatment"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxCondition3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Less than 1h since last exercise"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxCondition4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bedtime or Night right now"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:text="Result"/>
+
+    <Button
+        android:id="@+id/buttonDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"/>
+</LinearLayout>
