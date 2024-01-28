@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     }
     @SuppressLint("SetTextI18n")
     fun login() : Void? {
-        intent = Intent(this, logsActivity::class.java);
+        intent = Intent(this, ProfileDetailsActivity::class.java);
         startActivity(intent);
         finish();
         return null;

@@ -1,11 +1,11 @@
 package com.example.myapplication2;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,14 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
 import android.widget.Toast;
-
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.*;
 
 public class CarbCalculator extends Activity {
 
@@ -30,7 +29,7 @@ public class CarbCalculator extends Activity {
     private final ArrayList<EditText> weightEditTexts = new ArrayList<>();
     private double totalCalories = 0;
     private double totalCarbs = 0;
-    private final AtomicInteger tasksCompleted = new AtomicInteger(0);
+    private AtomicInteger tasksCompleted = new AtomicInteger(0);
     private ArrayList<LogData> dataList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +44,9 @@ public class CarbCalculator extends Activity {
             addFoodEntryField();
             calculateTotalNutrition();
         });
-
+        dataList = getIntent().getParcelableArrayListExtra("dataList");
         Button doneButton = findViewById(R.id.doneButton);
         doneButton.setOnClickListener(v -> navigateToNewPage());
-        dataList = getIntent().getParcelableArrayListExtra("dataList");
-        if (dataList == null) {
-            Log.d("datalist-single", "empty");
-        } else {
-            Log.d("datalist-single", "contains something");
-            Log.d("datalist-single-so", dataList.toString());
-        }
 
         Button buttonHome = findViewById(R.id.buttonHome);
         buttonHome.setOnClickListener(v -> {
@@ -109,7 +101,7 @@ public class CarbCalculator extends Activity {
         foodTypeEditText.setHint("Enter food type");
         InputFilter filter = (source, start, end, dest, dstart, dend) -> {
             for (int i = start; i < end; i++) {
-                if (!Character.isLetter(source.charAt(i))) {
+                if (!Character.isLetter(source.charAt(i)) && source.charAt(i) != ' ' && source.charAt(i) != '\'') {
                     return "";
                 }
             }
@@ -119,7 +111,7 @@ public class CarbCalculator extends Activity {
 
         EditText weightEditText = new EditText(this);
         weightEditText.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        weightEditText.setHint("Enter weight in grams");
+        weightEditText.setHint("Weight in grams");
         weightEditText.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         entryLayout.addView(foodTypeEditText);
@@ -161,15 +153,14 @@ public class CarbCalculator extends Activity {
         foodTypeEditTexts.add(foodTypeEditText);
         weightEditTexts.add(weightEditText);
     }
-
-
-    // ... [rest of your existing code]
-
     private void calculateTotalNutrition() {
-        totalCalories = 0;
-        totalCarbs = 0;
+        synchronized (this) {
+            totalCalories = 0;
+            totalCarbs = 0;
+        }
         tasksCompleted.set(0);
 
+        int totalTasks = 0;
         for (int i = 0; i < foodTypeEditTexts.size(); i++) {
             String foodType = foodTypeEditTexts.get(i).getText().toString().trim();
             String weight = weightEditTexts.get(i).getText().toString().trim();
@@ -178,26 +169,35 @@ public class CarbCalculator extends Activity {
                 try {
                     double weightValue = Double.parseDouble(weight);
                     if (weightValue > 0) {
-                        FetchNutritionTask task = new FetchNutritionTask(foodTypeEditTexts.size());
-                        task.execute(foodType, weight);
+                        totalTasks++;
+                        FetchNutritionTask task = new FetchNutritionTask(foodType, weight, totalTasks, tasksCompleted);
+                        task.execute();
                     }
-                } catch (NumberFormatException ignored) {
+                } catch (NumberFormatException e) {
+                    // Handle exception
                 }
             }
+        }
+
+        if (totalTasks == 0) {
+            resultTextView.setText("No valid entries found.");
         }
     }
 
     private class FetchNutritionTask extends AsyncTask<String, Void, String> {
+        private final String foodType;
+        private final String weight;
         private final int totalTasks;
+        private final AtomicInteger tasksCompleted;
 
-        public FetchNutritionTask(int totalTasks) {
+        public FetchNutritionTask(String foodType, String weight, int totalTasks, AtomicInteger tasksCompleted) {
+            this.foodType = foodType;
+            this.weight = weight;
             this.totalTasks = totalTasks;
+            this.tasksCompleted = tasksCompleted;
         }
-
         @Override
         protected String doInBackground(String... params) {
-            String foodType = params[0];
-            String weight = params[1];
             try {
                 String API_ENDPOINT = "https://api.edamam.com/api/nutrition-data";
                 String APP_ID = "9ed2e9f6";
@@ -240,7 +240,11 @@ public class CarbCalculator extends Activity {
                     }
 
                     if (tasksCompleted.incrementAndGet() == totalTasks) {
-                        resultTextView.setText(String.format("Total Calories: %.2f kcal\nTotal Carbs: %.2f grams", totalCalories, totalCarbs));
+                        synchronized (CarbCalculator.this) {
+                            if (tasksCompleted.get() == totalTasks) {
+                                resultTextView.setText(String.format("Total Calories: %.2f kcal\nTotal Carbs: %.2f grams", totalCalories, totalCarbs));
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -52,6 +52,11 @@ public class BolusCalculator extends Activity {
 
         insulinTimingSpinner = findViewById(R.id.insulinTimingSpinner);
         setupSpinner();
+        CheckBox[] checkBoxes = {checkBoxCondition1, checkBoxCondition2, checkBoxCondition3, checkBoxCondition4};
+        for (CheckBox checkBox : checkBoxes) {
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> calculateBolus());
+        }
+
 
         Button buttonReturn = findViewById(R.id.buttonReturn);
         buttonReturn.setOnClickListener(v -> finish());
@@ -110,6 +115,7 @@ public class BolusCalculator extends Activity {
     }
 
     private void setupSpinner() {
+
         String[] insulinTimings = {"Select Insulin Timing", "Before Breakfast", "After Lunch", "After Dinner"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, insulinTimings) {
             @Override
