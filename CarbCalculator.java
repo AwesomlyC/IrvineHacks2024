@@ -156,13 +156,13 @@ public class CarbCalculator extends Activity {
         weightEditTexts.add(weightEditText);
     }
     private void calculateTotalNutrition() {
-        totalCalories = 0;
-        totalCarbs = 0;
+        synchronized (this) {
+            totalCalories = 0;
+            totalCarbs = 0;
+        }
         tasksCompleted.set(0);
 
-        AtomicInteger totalTasks = new AtomicInteger(foodTypeEditTexts.size());
-        AtomicInteger localTasksCounter = new AtomicInteger(0);
-
+        int totalTasks = 0;
         for (int i = 0; i < foodTypeEditTexts.size(); i++) {
             String foodType = foodTypeEditTexts.get(i).getText().toString().trim();
             String weight = weightEditTexts.get(i).getText().toString().trim();
@@ -171,21 +171,17 @@ public class CarbCalculator extends Activity {
                 try {
                     double weightValue = Double.parseDouble(weight);
                     if (weightValue > 0) {
-                        localTasksCounter.incrementAndGet();
-                        FetchNutritionTask task = new FetchNutritionTask(foodType, weight, totalTasks.get(), tasksCompleted);
+                        totalTasks++;
+                        FetchNutritionTask task = new FetchNutritionTask(foodType, weight, totalTasks, tasksCompleted);
                         task.execute();
-                    } else {
-                        totalTasks.decrementAndGet();
                     }
                 } catch (NumberFormatException e) {
-                    totalTasks.decrementAndGet();
+                    // Handle exception
                 }
-            } else {
-                totalTasks.decrementAndGet();
             }
         }
 
-        if (localTasksCounter.get() == 0) {
+        if (totalTasks == 0) {
             resultTextView.setText("No valid entries found.");
         }
     }
