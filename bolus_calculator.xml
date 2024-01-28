@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,58 +9,109 @@
         android:id="@+id/buttonReturn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Return" />
+        android:text="Return"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/homeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/editTextCarbRatio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="57dp"
         android:hint="Enter Carbohydrate Ratio"
-        android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal" />
 
     <EditText
         android:id="@+id/editTextGlucoseReading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="260dp"
         android:hint="Enter Glucose Reading"
-        android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal" />
 
-    <!-- Add Checkboxes for Conditions -->
     <CheckBox
         android:id="@+id/checkBoxCondition1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Less than 3h since last dose"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="125dp"
+        android:text="Less than 3h since last dose" />
 
     <CheckBox
         android:id="@+id/checkBoxCondition2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Less than 3h since last meal/low glucose treatment"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="164dp"
+        android:text="Less than 3h since last meal/low glucose treatment" />
 
     <CheckBox
         android:id="@+id/checkBoxCondition3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Less than 1h since last exercise"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="187dp"
+        android:text="Less than 1h since last exercise" />
 
     <CheckBox
         android:id="@+id/checkBoxCondition4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bedtime or Night right now"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="447dp"
+        android:text="Bedtime or Night right now" />
+
+    <Spinner
+        android:id="@+id/insulinTimingSpinner"
+        android:text="Select Insulin Timing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="89dp" />
 
     <TextView
         android:id="@+id/textViewResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="362dp"
         android:gravity="center"
-        android:text="Result"/>
+        android:text="Result"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/buttonDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"/>
-</LinearLayout>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="419dp"
+        android:text="Done" />
+</RelativeLayout>
